@@ -2,8 +2,8 @@
   "name": "new-express-app",
   "version": "1.0.0",
   "description": "NPM package to create new pre-configured express app for REST API's from the command line",
-  "main": "index.js",
-  "bin": "index.js",
+  "main": "src/index.js",
+  "bin": "src/index.js",
   "scripts": {
     "start": "node src/index.js"
   },
