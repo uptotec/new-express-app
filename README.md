@@ -18,6 +18,10 @@ Run this command where you want to create the new app.
 npx new-express-app
 ```
 
+then answer the following Questions:
+
+![Imgur](https://i.imgur.com/aozj2Im.png)
+
 ## 🛠 Installed dependencies
 
 ### dependencies
