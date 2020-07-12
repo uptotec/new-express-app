@@ -12,6 +12,7 @@ const {
 
 cliQuestions().then(async (answers) => {
   const { confirmed, projectName, eslint, git } = answers;
+
   if (!confirmed) {
     return;
   }
@@ -36,6 +37,10 @@ cliQuestions().then(async (answers) => {
   await copyFile(
     path.join(__dirname, '..', 'data', 'router.txt'),
     path.join(process.cwd(), projectName, 'routes', 'router.js')
+  );
+  await copyFile(
+    path.join(__dirname, '..', 'data', 'controller.txt'),
+    path.join(process.cwd(), projectName, 'controllers', 'controller.js')
   );
   spinner.stopAndPersist({ symbol: '✔', text: 'coping js files' }).start();
 
