@@ -1,11 +1,21 @@
 {
   "name": "new-express-app",
   "version": "1.0.0",
-  "description": "create new express API project with cli commands",
+  "description": "NPM package to create new pre-configured express app for REST API's from the command line",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
     "start": "node src/index.js"
   },
+  "keywords": [
+    "create express project",
+    "express",
+    "node",
+    "REST API",
+    "create express api",
+    "create express app",
+    "node api"
+  ],
   "author": "Mahmoud Ashraf Mahmoud",
   "license": "MIT",
   "devDependencies": {
@@ -21,5 +31,13 @@
     "node-exec-promise": "^1.0.2",
     "ora": "^4.0.4",
     "prettier": "^2.0.5"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uptotec/new-express-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/uptotec/new-express-app/issues"
+  },
+  "homepage": "https://github.com/uptotec/new-express-app#readme"
 }
