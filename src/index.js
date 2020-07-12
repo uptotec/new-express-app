@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const ora = require('ora');
 const cliQuestions = require('./cli-Questions');
 
 const {
@@ -20,45 +19,22 @@ cliQuestions().then(async (answers) => {
     return;
   }
 
-  const spinner = ora('creating folders').start();
-  creatingFolders(projectName);
-  spinner.stopAndPersist({ symbol: '✔', text: 'creating folders' }).start();
+  await creatingFolders(projectName);
 
-  spinner.text = 'creating package.json';
   await createPackageJson(answers);
-  spinner
-    .stopAndPersist({ symbol: '✔', text: 'creating package.json' })
-    .start();
 
-  spinner.text = 'coping js files';
-  copyingJsFiles(projectName);
-  spinner.stopAndPersist({ symbol: '✔', text: 'coping js files' }).start();
+  await copyingJsFiles(projectName);
 
   if (eslint) {
-    spinner.text = 'coping eslint/pritter configs';
-    copyingESLintFiles(projectName);
-    spinner
-      .stopAndPersist({ symbol: '✔', text: 'coping eslint/pritter configs' })
-      .start();
+    await copyingESLintFiles(projectName);
   }
 
   if (git) {
-    spinner.text = 'coping git ignore config';
-    copyingGitFiles(projectName);
-    spinner
-      .stopAndPersist({ symbol: '✔', text: 'coping git ignore config' })
-      .start();
-
-    spinner.text = 'initialising git';
-    gitInit(projectName);
-    spinner.stopAndPersist({ symbol: '✔', text: 'initialising git' }).start();
+    await copyingGitFiles(projectName);
+    await gitInit(projectName);
   }
 
-  spinner.text = 'installing dependencies';
   await npmInstall(projectName);
-  spinner
-    .stopAndPersist({ symbol: '✔', text: 'installing dependencies' })
-    .start();
 
-  spinner.succeed('Finished 🎆✨');
+  console.log('✔ Finished 🎉✨');
 });

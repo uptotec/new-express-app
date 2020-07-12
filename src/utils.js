@@ -12,7 +12,7 @@ exports.createDir = (filePath) => {
 };
 
 exports.copyFile = async (src, dest) => {
-  fs.copyFileSync(src, dest, (err) => {
+  fs.copyFileSync(path.join(...src), path.join(...dest), (err) => {
     if (err) console.log(err);
   });
 };

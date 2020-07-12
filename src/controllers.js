@@ -1,32 +1,44 @@
 const path = require('path');
-const fs = require('fs');
 const editJsonFile = require('edit-json-file');
 const { exec } = require('node-exec-promise');
-
+const ora = require('ora');
 const { createDir, copyFile } = require('./utils');
+const { eslintDependencies } = require('./devDependencies');
 
 exports.creatingFolders = async (projectName) => {
-  await createDir(projectName);
-  await createDir(path.join(projectName, 'routes'));
-  await createDir(path.join(projectName, 'controllers'));
+  const spinner = ora('Creating Folders').start();
+
+  createDir(projectName);
+  createDir(path.join(projectName, 'routes'));
+  createDir(path.join(projectName, 'controllers'));
+
+  spinner.succeed('Folders Created');
 };
 
 exports.copyingJsFiles = async (projectName) => {
+  const spinner = ora('Copying JS Files').start();
+
   await copyFile(
-    path.join(__dirname, '..', 'data', 'index.txt'),
-    path.join(process.cwd(), projectName, 'index.js')
+    [__dirname, '..', 'data', 'index.txt'],
+    [process.cwd(), projectName, 'index.js']
   );
+
   await copyFile(
-    path.join(__dirname, '..', 'data', 'router.txt'),
-    path.join(process.cwd(), projectName, 'routes', 'router.js')
+    [__dirname, '..', 'data', 'router.txt'],
+    [process.cwd(), projectName, 'routes', 'router.js']
   );
+
   await copyFile(
-    path.join(__dirname, '..', 'data', 'controller.txt'),
-    path.join(process.cwd(), projectName, 'controllers', 'controller.js')
+    [__dirname, '..', 'data', 'controller.txt'],
+    [process.cwd(), projectName, 'controllers', 'controller.js']
   );
+
+  spinner.succeed('JS Files Copied');
 };
 
 exports.createPackageJson = async (answers) => {
+  const spinner = ora('Creating package.json').start();
+
   const {
     projectName: projectPath,
     eslint,
@@ -35,12 +47,9 @@ exports.createPackageJson = async (answers) => {
     description,
   } = answers;
 
-  fs.copyFileSync(
-    path.join(__dirname, '..', 'data', 'package.json'),
-    path.join(process.cwd(), projectPath, 'package.json'),
-    (err) => {
-      if (err) console.log(err);
-    }
+  await copyFile(
+    [__dirname, '..', 'data', 'package.json'],
+    [process.cwd(), projectPath, 'package.json']
   );
 
   const file = editJsonFile(
@@ -53,15 +62,7 @@ exports.createPackageJson = async (answers) => {
   file.set('author', author);
 
   if (eslint) {
-    file.set('devDependencies', {
-      eslint: '^7.4.0',
-      'eslint-config-airbnb-base': '^14.2.0',
-      'eslint-config-prettier': '^6.11.0',
-      'eslint-plugin-import': '^2.22.0',
-      'eslint-plugin-prettier': '^3.1.4',
-      nodemon: '^2.0.4',
-      prettier: '^2.0.5',
-    });
+    file.set('devDependencies', eslintDependencies);
   } else {
     file.set('devDependencies', {
       nodemon: '^2.0.4',
@@ -69,30 +70,49 @@ exports.createPackageJson = async (answers) => {
   }
 
   file.save();
+
+  spinner.succeed('package.json Created');
 };
 
 exports.copyingESLintFiles = async (projectName) => {
+  const spinner = ora('Creating eslint/pritter Config Files').start();
+
   await copyFile(
-    path.join(__dirname, '..', 'data', '.eslintrc.json'),
-    path.join(process.cwd(), projectName, '.eslintrc.json')
+    [__dirname, '..', 'data', '.eslintrc.json'],
+    [process.cwd(), projectName, '.eslintrc.json']
   );
+
   await copyFile(
-    path.join(__dirname, '..', 'data', 'prettier.config.js'),
-    path.join(process.cwd(), projectName, 'prettier.config.js')
+    [__dirname, '..', 'data', 'prettier.config.js'],
+    [process.cwd(), projectName, 'prettier.config.js']
   );
+
+  spinner.succeed('eslint/pritter Config Files Created');
 };
 
 exports.copyingGitFiles = async (projectName) => {
+  const spinner = ora('Creating Git Config File').start();
+
   await copyFile(
-    path.join(__dirname, '..', 'data', 'gitignore.txt'),
-    path.join(process.cwd(), projectName, '.gitignore')
+    [__dirname, '..', 'data', 'gitignore.txt'],
+    [process.cwd(), projectName, '.gitignore']
   );
+
+  spinner.succeed('Git Config File Created');
 };
 
 exports.npmInstall = async (projectPath) => {
+  const spinner = ora('Installing Dependencies').start();
+
   await exec(`cd ${projectPath} && npm install`);
+
+  spinner.succeed('Dependencies Installed');
 };
 
 exports.gitInit = async (projectPath) => {
+  const spinner = ora('Initialising Git').start();
+
   await exec(`git init -q ${path.join(process.cwd(), projectPath)}`);
+
+  spinner.succeed('Git Initialized');
 };
