@@ -1,0 +1,25 @@
+{
+  "name": "new-express-app",
+  "version": "1.0.0",
+  "description": "create new express API project with cli commands",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "author": "Mahmoud Ashraf Mahmoud",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^7.4.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4"
+  },
+  "dependencies": {
+    "edit-json-file": "^1.4.0",
+    "inquirer": "^7.3.1",
+    "node-exec-promise": "^1.0.2",
+    "ora": "^4.0.4",
+    "prettier": "^2.0.5"
+  }
+}
