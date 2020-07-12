@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
-const path = require('path');
 const ora = require('ora');
-
 const cliQuestions = require('./cli-Questions');
+
 const {
-  createDir,
+  creatingFolders,
+  copyingJsFiles,
   createPackageJson,
-  copyFile,
+  copyingESLintFiles,
+  copyingGitFiles,
   npmInstall,
   gitInit,
 } = require('./controllers');
@@ -20,10 +21,8 @@ cliQuestions().then(async (answers) => {
   }
 
   const spinner = ora('creating folders').start();
-  await createDir(projectName);
-  await createDir(path.join(projectName, 'routes'));
-  await createDir(path.join(projectName, 'controllers'));
-  spinner.stopAndPersist({ symbol: '✔', text: 'Creating folders' }).start();
+  creatingFolders(projectName);
+  spinner.stopAndPersist({ symbol: '✔', text: 'creating folders' }).start();
 
   spinner.text = 'creating package.json';
   await createPackageJson(answers);
@@ -32,30 +31,12 @@ cliQuestions().then(async (answers) => {
     .start();
 
   spinner.text = 'coping js files';
-  await copyFile(
-    path.join(__dirname, '..', 'data', 'index.txt'),
-    path.join(process.cwd(), projectName, 'index.js')
-  );
-  await copyFile(
-    path.join(__dirname, '..', 'data', 'router.txt'),
-    path.join(process.cwd(), projectName, 'routes', 'router.js')
-  );
-  await copyFile(
-    path.join(__dirname, '..', 'data', 'controller.txt'),
-    path.join(process.cwd(), projectName, 'controllers', 'controller.js')
-  );
+  copyingJsFiles(projectName);
   spinner.stopAndPersist({ symbol: '✔', text: 'coping js files' }).start();
 
   if (eslint) {
     spinner.text = 'coping eslint/pritter configs';
-    await copyFile(
-      path.join(__dirname, '..', 'data', '.eslintrc.json'),
-      path.join(process.cwd(), projectName, '.eslintrc.json')
-    );
-    await copyFile(
-      path.join(__dirname, '..', 'data', 'prettier.config.js'),
-      path.join(process.cwd(), projectName, 'prettier.config.js')
-    );
+    copyingESLintFiles(projectName);
     spinner
       .stopAndPersist({ symbol: '✔', text: 'coping eslint/pritter configs' })
       .start();
@@ -63,10 +44,7 @@ cliQuestions().then(async (answers) => {
 
   if (git) {
     spinner.text = 'coping git ignore config';
-    await copyFile(
-      path.join(__dirname, '..', 'data', 'gitignore.txt'),
-      path.join(process.cwd(), projectName, '.gitignore')
-    );
+    copyingGitFiles(projectName);
     spinner
       .stopAndPersist({ symbol: '✔', text: 'coping git ignore config' })
       .start();

@@ -1,22 +1,29 @@
-const fs = require('fs');
 const path = require('path');
-const { exec } = require('node-exec-promise');
+const fs = require('fs');
 const editJsonFile = require('edit-json-file');
+const { exec } = require('node-exec-promise');
 
-exports.createDir = (filePath) => {
-  fs.mkdirSync(
-    path.join(process.cwd(), filePath),
-    { recursive: true },
-    (err) => {
-      console.log(err);
-    }
-  );
+const { createDir, copyFile } = require('./utils');
+
+exports.creatingFolders = async (projectName) => {
+  await createDir(projectName);
+  await createDir(path.join(projectName, 'routes'));
+  await createDir(path.join(projectName, 'controllers'));
 };
 
-exports.copyFile = async (src, dest) => {
-  fs.copyFileSync(src, dest, (err) => {
-    if (err) console.log(err);
-  });
+exports.copyingJsFiles = async (projectName) => {
+  await copyFile(
+    path.join(__dirname, '..', 'data', 'index.txt'),
+    path.join(process.cwd(), projectName, 'index.js')
+  );
+  await copyFile(
+    path.join(__dirname, '..', 'data', 'router.txt'),
+    path.join(process.cwd(), projectName, 'routes', 'router.js')
+  );
+  await copyFile(
+    path.join(__dirname, '..', 'data', 'controller.txt'),
+    path.join(process.cwd(), projectName, 'controllers', 'controller.js')
+  );
 };
 
 exports.createPackageJson = async (answers) => {
@@ -62,6 +69,24 @@ exports.createPackageJson = async (answers) => {
   }
 
   file.save();
+};
+
+exports.copyingESLintFiles = async (projectName) => {
+  await copyFile(
+    path.join(__dirname, '..', 'data', '.eslintrc.json'),
+    path.join(process.cwd(), projectName, '.eslintrc.json')
+  );
+  await copyFile(
+    path.join(__dirname, '..', 'data', 'prettier.config.js'),
+    path.join(process.cwd(), projectName, 'prettier.config.js')
+  );
+};
+
+exports.copyingGitFiles = async (projectName) => {
+  await copyFile(
+    path.join(__dirname, '..', 'data', 'gitignore.txt'),
+    path.join(process.cwd(), projectName, '.gitignore')
+  );
 };
 
 exports.npmInstall = async (projectPath) => {
