@@ -64,7 +64,7 @@ cliQuestions().then(async (answers) => {
   if (git) {
     spinner.text = 'coping git ignore config';
     await copyFile(
-      path.join(__dirname, '..', 'data', '.gitignore'),
+      path.join(__dirname, '..', 'data', 'gitignore.txt'),
       path.join(process.cwd(), projectName, '.gitignore')
     );
     spinner
