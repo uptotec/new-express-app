@@ -43,7 +43,6 @@ then answer the following Questions to configure your project:
 ### dependencies
 
 - Express
-- body-parser
 - cors
 - dotenv
 - mongoDB
@@ -85,15 +84,14 @@ If you chose to add <code><b>git</b></code> or <code><b>eslint</b></code> requir
 
 ```javascript
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const router = require('./routes/router');
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded());
+app.use(express.json());
 
 app.use(cors({ origin: true, credentials: true }));
 
