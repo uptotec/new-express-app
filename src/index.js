@@ -10,10 +10,11 @@ const {
   copyingGitFiles,
   npmInstall,
   gitInit,
+  copyingDotEnvFiles,
 } = require('./controllers');
 
 cliQuestions().then(async (answers) => {
-  const { confirmed, projectName, eslint, git } = answers;
+  const { confirmed, projectName, eslint, git, dotenv } = answers;
 
   if (!confirmed) {
     return;
@@ -32,6 +33,10 @@ cliQuestions().then(async (answers) => {
   if (git) {
     await copyingGitFiles(projectName);
     await gitInit(projectName);
+  }
+
+  if (dotenv) {
+    await copyingDotEnvFiles(projectName);
   }
 
   await npmInstall(projectName);

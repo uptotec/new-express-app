@@ -20,7 +20,19 @@ npx new-express-app
 
 then answer the following Questions:
 
-![Imgur](https://i.imgur.com/aozj2Im.png)
+? Enter Project Name:
+
+? Enter version: 1.0.0
+
+? Enter description:
+
+? Enter author name:
+
+? Want to initialise git?
+
+? Want to install dotEnv?
+
+? Want to initialise eslint/prettier?
 
 ## 🛠 Installed dependencies
 
@@ -29,6 +41,7 @@ then answer the following Questions:
 - Express
 - body-parser
 - cors
+- dotenv
 
 ### dev-dependencies
 

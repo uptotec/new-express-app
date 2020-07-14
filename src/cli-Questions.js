@@ -36,6 +36,11 @@ module.exports = async () => {
     },
     {
       type: 'confirm',
+      name: 'dotenv',
+      message: 'Want to install dotEnv?',
+    },
+    {
+      type: 'confirm',
       name: 'eslint',
       message: 'Want to initialise eslint/prettier?',
     },

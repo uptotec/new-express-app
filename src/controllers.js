@@ -1,6 +1,7 @@
 const path = require('path');
 const editJsonFile = require('edit-json-file');
 const { exec } = require('node-exec-promise');
+const insertLine = require('insert-line');
 const ora = require('ora');
 const { createDir, copyFile } = require('./utils');
 const { eslintDependencies } = require('./devDependencies');
@@ -36,16 +37,14 @@ exports.copyingJsFiles = async (projectName) => {
   spinner.succeed('JS Files Copied');
 };
 
-exports.createPackageJson = async (answers) => {
+exports.createPackageJson = async ({
+  projectName: projectPath,
+  eslint,
+  version,
+  author,
+  description,
+}) => {
   const spinner = ora('Creating package.json').start();
-
-  const {
-    projectName: projectPath,
-    eslint,
-    version,
-    author,
-    description,
-  } = answers;
 
   await copyFile(
     [__dirname, '..', 'data', 'package.json'],
@@ -99,6 +98,32 @@ exports.copyingGitFiles = async (projectName) => {
   );
 
   spinner.succeed('Git Config File Created');
+};
+
+exports.copyingDotEnvFiles = async (projectName) => {
+  const spinner = ora('Creating .env File').start();
+
+  const file = editJsonFile(
+    path.join(process.cwd(), projectName, 'package.json')
+  );
+
+  const dependencies = file.get('dependencies');
+  dependencies.dotenv = '^8.2.0';
+
+  file.set('dependencies', dependencies);
+
+  file.save();
+
+  insertLine(path.join(process.cwd(), projectName, 'index.js')).prependSync(
+    "require('dotenv').config();"
+  );
+
+  await copyFile(
+    [__dirname, '..', 'data', 'env.txt'],
+    [process.cwd(), projectName, '.env']
+  );
+
+  spinner.succeed('.env File Created');
 };
 
 exports.npmInstall = async (projectPath) => {
