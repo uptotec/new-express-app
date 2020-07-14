@@ -4,7 +4,7 @@ const { exec } = require('node-exec-promise');
 const insertLine = require('insert-line');
 const ora = require('ora');
 const { createDir, copyFile } = require('./utils');
-const { eslintDependencies } = require('./devDependencies');
+const { eslintDependencies } = require('./dependencies');
 
 exports.creatingFolders = async (projectName) => {
   const spinner = ora('Creating Folders').start();
@@ -60,12 +60,10 @@ exports.createPackageJson = async ({
   file.set('description', description);
   file.set('author', author);
 
+  const devDependencies = file.get('devDependencies');
+
   if (eslint) {
-    file.set('devDependencies', eslintDependencies);
-  } else {
-    file.set('devDependencies', {
-      nodemon: '^2.0.4',
-    });
+    file.set('devDependencies', { ...devDependencies, ...eslintDependencies });
   }
 
   file.save();
@@ -100,15 +98,13 @@ exports.copyingGitFiles = async (projectName) => {
   spinner.succeed('Git Config File Created');
 };
 
-exports.copyingDotEnvFiles = async (projectName) => {
-  const spinner = ora('Creating .env File').start();
-
+exports.copyingDotEnvFiles = async (projectName, db) => {
   const file = editJsonFile(
     path.join(process.cwd(), projectName, 'package.json')
   );
 
   const dependencies = file.get('dependencies');
-  dependencies.dotenv = '^8.2.0';
+  dependencies.dotenv = 'latest';
 
   file.set('dependencies', dependencies);
 
@@ -123,7 +119,23 @@ exports.copyingDotEnvFiles = async (projectName) => {
     [process.cwd(), projectName, '.env']
   );
 
-  spinner.succeed('.env File Created');
+  switch (db) {
+    case 'mongoose':
+      insertLine(path.join(process.cwd(), projectName, '.env')).prependSync(
+        'DB_URL= //enter your DB connection string'
+      );
+      break;
+    case 'mongodb':
+      insertLine(path.join(process.cwd(), projectName, '.env')).prependSync(
+        'DB_URL= //enter your DB connection string'
+      );
+      insertLine(path.join(process.cwd(), projectName, '.env')).prependSync(
+        'DB_NAME= //enter your DB name'
+      );
+      break;
+  }
+
+  createDir(path.join(projectName, 'models'));
 };
 
 exports.npmInstall = async (projectPath) => {
@@ -140,4 +152,81 @@ exports.gitInit = async (projectPath) => {
   await exec(`git init -q ${path.join(process.cwd(), projectPath)}`);
 
   spinner.succeed('Git Initialized');
+};
+
+exports.addDB = (projectName, db) => {
+  const mongoose = async () => {
+    const file = editJsonFile(
+      path.join(process.cwd(), projectName, 'package.json')
+    );
+
+    const dependencies = file.get('dependencies');
+    dependencies.mongoose = 'latest';
+
+    file.set('dependencies', dependencies);
+
+    file.save();
+
+    insertLine(path.join(process.cwd(), projectName, 'index.js')).prependSync(
+      "const mongoose = require('mongoose');"
+    );
+
+    insertLine(path.join(process.cwd(), projectName, 'index.js')).appendSync(
+      `mongoose.connect(process.env.DB_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      }).then(() => {
+        app.listen(process.env.SERVER_PORT, () => {console.log('Server Running')});
+      });`
+    );
+  };
+
+  const mongodb = async () => {
+    const file = editJsonFile(
+      path.join(process.cwd(), projectName, 'package.json')
+    );
+
+    const dependencies = file.get('dependencies');
+    dependencies.mongodb = 'latest';
+    dependencies.assert = 'latest';
+
+    file.set('dependencies', dependencies);
+
+    file.save();
+
+    insertLine(path.join(process.cwd(), projectName, 'index.js')).prependSync(
+      "const assert = require('assert');"
+    );
+
+    insertLine(path.join(process.cwd(), projectName, 'index.js')).prependSync(
+      "const MongoClient = require('mongodb').MongoClient;"
+    );
+
+    insertLine(path.join(process.cwd(), projectName, 'index.js')).appendSync(
+      `MongoClient.connect(process.env.DB_URL, (err, client) => {
+        assert.equal(null, err);
+        console.log("Connected successfully to server");
+
+        app.listen(process.env.SERVER_PORT, () => {console.log('Server Running')});
+       
+        const db = client.db(process.env.DB_NAME);
+       
+        client.close();
+      });`
+    );
+  };
+
+  switch (db) {
+    case 'mongoose':
+      mongoose();
+      break;
+    case 'mongodb':
+      mongodb();
+  }
+};
+
+exports.addListen = (projectName) => {
+  insertLine(path.join(process.cwd(), projectName, 'index.js')).appendSync(
+    "app.listen(process.env.SERVER_PORT, () => {console.log('Server Running')});"
+  );
 };

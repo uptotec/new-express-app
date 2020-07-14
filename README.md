@@ -18,11 +18,12 @@ Run this command where you want to create the new app.
 npx new-express-app
 ```
 
-then answer the following Questions:
+then answer the following Questions to configure your project:
 
+```bash
 ? Enter Project Name:
 
-? Enter version: 1.0.0
+? Enter version:
 
 ? Enter description:
 
@@ -32,7 +33,10 @@ then answer the following Questions:
 
 ? Want to install dotEnv?
 
+? Want to install database driver?
+
 ? Want to initialise eslint/prettier?
+```
 
 ## 🛠 Installed dependencies
 
@@ -42,6 +46,8 @@ then answer the following Questions:
 - body-parser
 - cors
 - dotenv
+- mongoDB
+- mongoose
 
 ### dev-dependencies
 
@@ -62,7 +68,10 @@ If you chose to add <code><b>git</b></code> or <code><b>eslint</b></code> requir
 .
 ├── controllers
 	└── controller.js
+├── models
 ├── index.js
+├── .env
+├── .gitignore
 ├── package-lock.json
 ├── package.json
 ├── prettier.config.js

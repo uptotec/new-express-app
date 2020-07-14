@@ -18,6 +18,13 @@ module.exports = async () => {
       name: 'version',
       message: 'Enter version:',
       default: '1.0.0',
+      validate: (input) => {
+        const valid = /^(\*|\d+(\.\d+){2,2}(\.\*)?)$/.test(input)
+          ? true
+          : 'Enter a valid version';
+
+        return valid;
+      },
     },
     {
       type: 'input',
@@ -38,6 +45,12 @@ module.exports = async () => {
       type: 'confirm',
       name: 'dotenv',
       message: 'Want to install dotEnv?',
+    },
+    {
+      type: 'list',
+      name: 'db',
+      message: 'Want to install database driver?',
+      choices: ['mongodb', 'mongoose', 'none'],
     },
     {
       type: 'confirm',

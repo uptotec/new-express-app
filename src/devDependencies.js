@@ -1,9 +1,0 @@
-exports.eslintDependencies = {
-  eslint: '^7.4.0',
-  'eslint-config-airbnb-base': '^14.2.0',
-  'eslint-config-prettier': '^6.11.0',
-  'eslint-plugin-import': '^2.22.0',
-  'eslint-plugin-prettier': '^3.1.4',
-  nodemon: '^2.0.4',
-  prettier: '^2.0.5',
-};

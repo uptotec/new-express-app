@@ -11,10 +11,12 @@ const {
   npmInstall,
   gitInit,
   copyingDotEnvFiles,
+  addDB,
+  addListen,
 } = require('./controllers');
 
 cliQuestions().then(async (answers) => {
-  const { confirmed, projectName, eslint, git, dotenv } = answers;
+  const { confirmed, projectName, eslint, git, dotenv, db } = answers;
 
   if (!confirmed) {
     return;
@@ -35,8 +37,14 @@ cliQuestions().then(async (answers) => {
     await gitInit(projectName);
   }
 
+  if (db !== 'none') {
+    addDB(projectName, db);
+  } else {
+    addListen(projectName);
+  }
+
   if (dotenv) {
-    await copyingDotEnvFiles(projectName);
+    await copyingDotEnvFiles(projectName, db);
   }
 
   await npmInstall(projectName);
