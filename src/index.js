@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+const cli = require('inquirer');
+
 const cliQuestions = require('./cli-Questions');
 
 const {
@@ -13,6 +15,7 @@ const {
   copyingDotEnvFiles,
   addDB,
   addListen,
+  openVsCode,
 } = require('./controllers');
 
 cliQuestions().then(async (answers) => {
@@ -50,4 +53,18 @@ cliQuestions().then(async (answers) => {
   await npmInstall(projectName);
 
   console.log('✔ Finished 🎉✨');
+
+  cli
+    .prompt([
+      {
+        type: 'confirm',
+        name: 'vscode',
+        message: 'Want to open vscode?',
+      },
+    ])
+    .then(({ vscode }) => {
+      if (vscode) {
+        openVsCode(projectName);
+      }
+    });
 });

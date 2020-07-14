@@ -230,3 +230,7 @@ exports.addListen = (projectName) => {
     "app.listen(process.env.SERVER_PORT, () => {console.log('Server Running')});"
   );
 };
+
+exports.openVsCode = async (projectName) => {
+  await exec(`cd ${projectName} && code .`);
+};
