@@ -1,10 +1,12 @@
 # new-express-app
 
+![npm bundle size](https://img.shields.io/bundlephobia/min/new-express-app?label=package%20size) ![npm](https://img.shields.io/npm/dt/new-express-app) ![GitHub issues](https://img.shields.io/github/issues/uptotec/new-express-app) ![NPM](https://img.shields.io/npm/l/new-express-app) ![GitHub package.json version](https://img.shields.io/github/package-json/v/uptotec/new-express-app?label=GitHub%20version) ![npm](https://img.shields.io/npm/v/new-express-app)
+
 NPM package to create new pre-configured express app for REST API's from the command line. [Download](https://www.npmjs.com/package/new-express-app)
 
 ## 🎉 What's new?
 
-### V 1.2.0 (Current)
+### V 1.2.0
 
 (July 15, 2020) Now, you can choose between JavaScript with EsLint setup and TypeScript with TsLint setup. 🎉🎆
 
@@ -86,17 +88,21 @@ If you chose to add <code><b>git</b></code> or <code><b>eslint</b></code> requir
 
 ```bash
 .
+├── .env
+├── .eslintrc.json
+├── .gitignore
 ├── package-lock.json
 ├── package.json
-├── src
-│   ├── controllers
-│   │   └── controller.ts
-│   ├── index.ts
-│   ├── models
-│   └── routes
-│       └── router.ts
-├── tsconfig.json
-└── tslint.json
+├── prettier.config.js
+└── src
+    ├── controllers
+    │   └── controller.js
+    ├── index.js
+    ├── models
+    └── routes
+        └── router.js
+
+4 directories, 9 files
 ```
 
 ### TypeScript Setup
@@ -117,6 +123,8 @@ If you chose to add <code><b>git</b></code> or <code><b>eslint</b></code> requir
 │       └── router.ts
 ├── tsconfig.json
 └── tslint.json
+
+4 directories, 10 files
 ```
 
 ## 📄 Files Content

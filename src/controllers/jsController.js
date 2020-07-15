@@ -78,7 +78,7 @@ exports.copyingESLintFiles = async (projectName) => {
 
   await copyFile(projectName, paths.jsEslintSrc, paths.jsEslintDest);
 
-  await copyFile(projectName, paths.jsPackageJsonSrc, paths.jsPackageJsonDest);
+  await copyFile(projectName, paths.jsPritterSrc, paths.jsPritterDest);
 
   spinner.succeed('eslint/pritter Config Files Created');
 };
