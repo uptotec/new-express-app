@@ -1,13 +1,19 @@
 # new-express-app
 
-NPM package to create new pre-configured express app for REST API's from the command line
+NPM package to create new pre-configured express app for REST API's from the command line. [Download](https://www.npmjs.com/package/new-express-app)
+
+## 🎉 What's new?
+
+### V 1.2.0 (Current)
+
+(July 15, 2020) Now, you can choose between JavaScript with EsLint setup and TypeScript with TsLint setup. 🎉🎆
 
 ## 📥 Installation
 
 install the package globally with this command.
 
 ```bash
-npm install --save -g new-express-app
+npm i -g new-express-app
 ```
 
 ## ⚙️ Usage
@@ -22,60 +28,95 @@ then answer the following Questions to configure your project:
 
 ```bash
 ? Enter Project Name:
-
 ? Enter version:
-
 ? Enter description:
-
 ? Enter author name:
-
+? what language you want to use? # JavaScript or TypeScript
 ? Want to initialise git?
-
 ? Want to install dotEnv?
-
-? Want to install database driver?
-
-? Want to initialise eslint/prettier?
+? Want to install database driver? #MongoDB, Mongoose or None
+? Want to initialise TsLint/Prettier? # if you chose JavaScript
+? Want to initialise TsLint/Prettier? # if you chose TypeScript
 ```
 
 ## 🛠 Installed dependencies
 
-### dependencies
+### Default Dependencies with JavaScript Setup
 
 - Express
 - cors
+
+### Default Dependencies with TypeScript Setup
+
+- Express
+- cors
+- typescript
+- ts-node
+
+### Optinal Dependencies
+
 - dotenv
 - mongoDB
+- assert
 - mongoose
 
-### dev-dependencies
+### Default devDependencies with JavaScript Setup
 
 - nodemon
-- eslint
+
+### Default devDependencies with TypeScript Setup
+
+- nodemon
+- @types/node
+- @types/express
+- @types/cors
+
+### Optinal devDependencies
+
+- EsLint / TsLint
 - prettier
-- eslint-config-airbnb-base
-- eslint-config-prettier
-- eslint-plugin-import
-- eslint-plugin-prettier
+- required devDependencies for the past two devDependencies.
 
 ## 📁 Folder structure
 
 The package creates an <code><b>index.js</b></code> file, <code><b>routes</b></code> folder, and <code><b>controllers</b></code> folder.
 If you chose to add <code><b>git</b></code> or <code><b>eslint</b></code> required configuration files will be added.
 
+### JavaScript Setup
+
 ```bash
 .
-├── controllers
-	└── controller.js
-├── models
-├── index.js
-├── .env
-├── .gitignore
 ├── package-lock.json
 ├── package.json
-├── prettier.config.js
-└── routes
-    └── router.js
+├── src
+│   ├── controllers
+│   │   └── controller.ts
+│   ├── index.ts
+│   ├── models
+│   └── routes
+│       └── router.ts
+├── tsconfig.json
+└── tslint.json
+```
+
+### TypeScript Setup
+
+```bash
+.
+├── .env
+├── .gitignore
+├── .prettierrc.json
+├── package-lock.json
+├── package.json
+├── src
+│   ├── controllers
+│   │   └── controller.ts
+│   ├── index.ts
+│   ├── models
+│   └── routes
+│       └── router.ts
+├── tsconfig.json
+└── tslint.json
 ```
 
 ## 📄 Files Content

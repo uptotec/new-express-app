@@ -1,0 +1,4 @@
+import mongo from 'mongodb';
+import assert from 'assert';
+
+const MongoClient = mongo.MongoClient;

@@ -1,0 +1,6 @@
+mongoose.connect(process.env.DB_URL!, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    app.listen(process.env.SERVER_PORT, () => {console.log('Server Running')});
+});

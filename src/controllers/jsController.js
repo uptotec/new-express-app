@@ -1,22 +1,11 @@
 const path = require('path');
 const fs = require('fs');
 const editJsonFile = require('edit-json-file');
-const { exec } = require('node-exec-promise');
 const insertLine = require('insert-line');
 const ora = require('ora');
-const { createDir, copyFile } = require('./utils');
-const { eslintDependencies } = require('./dependencies');
-const paths = require('./paths');
-
-exports.creatingFolders = async (projectName) => {
-  const spinner = ora('Creating Folders').start();
-
-  createDir(projectName);
-  createDir(path.join(projectName, 'src', 'routes'));
-  createDir(path.join(projectName, 'src', 'controllers'));
-
-  spinner.succeed('Folders Created');
-};
+const { createDir, copyFile } = require('../utils');
+const { eslintDependencies } = require('../dependencies');
+const paths = require('../paths');
 
 exports.copyingJsFiles = async (projectName) => {
   const spinner = ora('Copying JS Files').start();
@@ -30,7 +19,7 @@ exports.copyingJsFiles = async (projectName) => {
   spinner.succeed('JS Files Copied');
 };
 
-exports.createPackageJson = async ({
+exports.createJsPackageJson = async ({
   projectName: projectPath,
   eslint,
   dotenv,
@@ -94,17 +83,9 @@ exports.copyingESLintFiles = async (projectName) => {
   spinner.succeed('eslint/pritter Config Files Created');
 };
 
-exports.copyingGitFiles = async (projectName) => {
-  const spinner = ora('Creating Git Config File').start();
-
-  await copyFile(projectName, paths.gitSrc, paths.gitDest);
-
-  spinner.succeed('Git Config File Created');
-};
-
-exports.copyingDotEnvFiles = async (projectName) => {
+exports.copyingJsDotEnvFiles = async (projectName) => {
   const requireDotenv = fs.readFileSync(
-    path.join(__dirname, ...paths.requireDotenv)
+    path.join(__dirname, '..', ...paths.requireDotenv)
   );
 
   insertLine(
@@ -114,30 +95,14 @@ exports.copyingDotEnvFiles = async (projectName) => {
   await copyFile(projectName, paths.dotenvSrc, paths.dotenvDest);
 };
 
-exports.npmInstall = async (projectPath) => {
-  const spinner = ora('Installing Dependencies').start();
-
-  await exec(`cd ${projectPath} && npm install`);
-
-  spinner.succeed('Dependencies Installed');
-};
-
-exports.gitInit = async (projectPath) => {
-  const spinner = ora('Initialising Git').start();
-
-  await exec(`git init -q ${path.join(process.cwd(), projectPath)}`);
-
-  spinner.succeed('Git Initialized');
-};
-
-exports.addDB = (projectName, db) => {
+exports.addJsDB = (projectName, db) => {
   const mongoose = async () => {
     const requireMongoose = fs.readFileSync(
-      path.join(__dirname, ...paths.requireMongoose)
+      path.join(__dirname, '..', ...paths.requireMongoose)
     );
 
     const mongooseConnect = fs.readFileSync(
-      path.join(__dirname, ...paths.mongooseConnect)
+      path.join(__dirname, '..', ...paths.jsMongooseConnect)
     );
 
     insertLine(
@@ -151,11 +116,11 @@ exports.addDB = (projectName, db) => {
 
   const mongodb = async () => {
     const requireMongodb = fs.readFileSync(
-      path.join(__dirname, ...paths.requireMongodb)
+      path.join(__dirname, '..', ...paths.requireMongodb)
     );
 
     const mongodbConnect = fs.readFileSync(
-      path.join(__dirname, ...paths.mongodbConnect)
+      path.join(__dirname, '..', ...paths.jsMongodbConnect)
     );
 
     insertLine(
@@ -176,16 +141,4 @@ exports.addDB = (projectName, db) => {
   }
 
   createDir(path.join(projectName, 'src', 'models'));
-};
-
-exports.addListen = (projectName) => {
-  const appListen = fs.readFileSync(path.join(__dirname, ...paths.appListen));
-
-  insertLine(
-    path.join(process.cwd(), projectName, ...paths.jsIndexDest)
-  ).appendSync(appListen);
-};
-
-exports.openVsCode = async (projectName) => {
-  await exec(`cd ${projectName} && code .`);
 };

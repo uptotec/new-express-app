@@ -37,6 +37,18 @@ module.exports = async () => {
       message: 'Enter author name:',
     },
     {
+      type: 'list',
+      name: 'lan',
+      message: 'what language you want to use?',
+      choices: ['JavaScript', 'TypeScript'],
+      filter: (input) => {
+        if (input === 'JavaScript') {
+          return 'js';
+        }
+        return 'ts';
+      },
+    },
+    {
       type: 'confirm',
       name: 'git',
       message: 'Want to initialise git?',
@@ -55,7 +67,14 @@ module.exports = async () => {
     {
       type: 'confirm',
       name: 'eslint',
-      message: 'Want to initialise eslint/prettier?',
+      message: 'Want to initialise EsLint/Prettier?',
+      when: (answers) => answers.lan === 'js',
+    },
+    {
+      type: 'confirm',
+      name: 'tslint',
+      message: 'Want to initialise TsLint/Prettier?',
+      when: (answers) => answers.lan === 'ts',
     },
   ]);
 

@@ -5,29 +5,33 @@ const cli = require('inquirer');
 const cliQuestions = require('./cli-Questions');
 
 const {
-  creatingFolders,
   copyingJsFiles,
-  createPackageJson,
+  createJsPackageJson,
   copyingESLintFiles,
-  copyingGitFiles,
+  copyingJsDotEnvFiles,
+  addJsDB,
+} = require('./controllers/jsController');
+
+const {
+  copyingTsFiles,
+  createTsPackageJson,
+  copyingTSLintFiles,
+  addTsDB,
+  copyingTsDotEnvFiles,
+} = require('./controllers/tsController');
+
+const {
+  creatingFolders,
   npmInstall,
   gitInit,
-  copyingDotEnvFiles,
-  addDB,
   addListen,
   openVsCode,
-} = require('./controllers');
+} = require('./controllers/common');
 
-cliQuestions().then(async (answers) => {
-  const { confirmed, projectName, eslint, git, dotenv, db } = answers;
+const installForJs = async (answers) => {
+  const { projectName, eslint, dotenv, db, lan } = answers;
 
-  if (!confirmed) {
-    return;
-  }
-
-  await creatingFolders(projectName);
-
-  await createPackageJson(answers);
+  await createJsPackageJson(answers);
 
   await copyingJsFiles(projectName);
 
@@ -35,19 +39,56 @@ cliQuestions().then(async (answers) => {
     await copyingESLintFiles(projectName);
   }
 
-  if (git) {
-    await copyingGitFiles(projectName);
-    await gitInit(projectName);
-  }
-
   if (db !== 'none') {
-    addDB(projectName, db);
+    addJsDB(projectName, db);
   } else {
-    addListen(projectName);
+    addListen(projectName, lan);
   }
 
   if (dotenv) {
-    await copyingDotEnvFiles(projectName, db);
+    await copyingJsDotEnvFiles(projectName);
+  }
+};
+
+const installForTs = async (answers) => {
+  const { projectName, tslint, dotenv, db, lan } = answers;
+
+  await createTsPackageJson(answers);
+
+  await copyingTsFiles(projectName);
+
+  if (tslint) {
+    copyingTSLintFiles(projectName);
+  }
+
+  if (db !== 'none') {
+    addTsDB(projectName, db);
+  } else {
+    addListen(projectName, lan);
+  }
+
+  if (dotenv) {
+    await copyingTsDotEnvFiles(projectName);
+  }
+};
+
+cliQuestions().then(async (answers) => {
+  const { confirmed, projectName, git, lan } = answers;
+
+  if (!confirmed) {
+    return;
+  }
+
+  await creatingFolders(projectName);
+
+  if (lan === 'js') {
+    installForJs(answers);
+  } else {
+    installForTs(answers);
+  }
+
+  if (git) {
+    await gitInit(projectName);
   }
 
   await npmInstall(projectName);

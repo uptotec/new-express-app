@@ -6,3 +6,10 @@ exports.eslintDependencies = {
   'eslint-plugin-prettier': 'latest',
   prettier: 'latest',
 };
+
+exports.tslintDependencies = {
+  prettier: 'latest',
+  'tslint-config-airbnb': 'latest',
+  'tslint-config-prettier': 'latest',
+  tslint: 'latest',
+};
