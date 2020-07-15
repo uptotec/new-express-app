@@ -1,0 +1,10 @@
+MongoClient.connect(process.env.DB_URL, (err, client) => {
+    assert.equal(null, err);
+    console.log("Connected successfully to server");
+
+    app.listen(process.env.SERVER_PORT, () => {console.log('Server Running')});
+    
+    const db = client.db(process.env.DB_NAME);
+    
+    client.close();
+});

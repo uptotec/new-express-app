@@ -11,8 +11,12 @@ exports.createDir = (filePath) => {
   );
 };
 
-exports.copyFile = async (src, dest) => {
-  fs.copyFileSync(path.join(...src), path.join(...dest), (err) => {
-    if (err) console.log(err);
-  });
+exports.copyFile = async (projectName, src, dest) => {
+  fs.copyFileSync(
+    path.join(__dirname, '..', ...src),
+    path.join(process.cwd(), projectName, ...dest),
+    (err) => {
+      if (err) console.log(err);
+    }
+  );
 };

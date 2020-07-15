@@ -1,17 +1,19 @@
 const path = require('path');
+const fs = require('fs');
 const editJsonFile = require('edit-json-file');
 const { exec } = require('node-exec-promise');
 const insertLine = require('insert-line');
 const ora = require('ora');
 const { createDir, copyFile } = require('./utils');
 const { eslintDependencies } = require('./dependencies');
+const paths = require('./paths');
 
 exports.creatingFolders = async (projectName) => {
   const spinner = ora('Creating Folders').start();
 
   createDir(projectName);
-  createDir(path.join(projectName, 'routes'));
-  createDir(path.join(projectName, 'controllers'));
+  createDir(path.join(projectName, 'src', 'routes'));
+  createDir(path.join(projectName, 'src', 'controllers'));
 
   spinner.succeed('Folders Created');
 };
@@ -19,20 +21,11 @@ exports.creatingFolders = async (projectName) => {
 exports.copyingJsFiles = async (projectName) => {
   const spinner = ora('Copying JS Files').start();
 
-  await copyFile(
-    [__dirname, '..', 'data', 'index.txt'],
-    [process.cwd(), projectName, 'index.js']
-  );
+  await copyFile(projectName, paths.jsIndexSrc, paths.jsIndexDest);
 
-  await copyFile(
-    [__dirname, '..', 'data', 'router.txt'],
-    [process.cwd(), projectName, 'routes', 'router.js']
-  );
+  await copyFile(projectName, paths.jsRouterSrc, paths.jsRouterdest);
 
-  await copyFile(
-    [__dirname, '..', 'data', 'controller.txt'],
-    [process.cwd(), projectName, 'controllers', 'controller.js']
-  );
+  await copyFile(projectName, paths.jsControllerSrc, paths.jsControllerDest);
 
   spinner.succeed('JS Files Copied');
 };
@@ -40,16 +33,15 @@ exports.copyingJsFiles = async (projectName) => {
 exports.createPackageJson = async ({
   projectName: projectPath,
   eslint,
+  dotenv,
+  db,
   version,
   author,
   description,
 }) => {
   const spinner = ora('Creating package.json').start();
 
-  await copyFile(
-    [__dirname, '..', 'data', 'package.json'],
-    [process.cwd(), projectPath, 'package.json']
-  );
+  await copyFile(projectPath, paths.jsPackageJsonSrc, paths.jsPackageJsonDest);
 
   const file = editJsonFile(
     path.join(process.cwd(), projectPath, 'package.json')
@@ -60,13 +52,34 @@ exports.createPackageJson = async ({
   file.set('description', description);
   file.set('author', author);
 
-  const devDependencies = file.get('devDependencies');
-
   if (eslint) {
+    const devDependencies = file.get('devDependencies');
     file.set('devDependencies', { ...devDependencies, ...eslintDependencies });
   }
 
-  file.save();
+  if (dotenv) {
+    const dependencies = file.get('dependencies');
+    dependencies.dotenv = 'latest';
+
+    file.set('dependencies', dependencies);
+  }
+
+  if (db === 'mongoose') {
+    const dependencies = file.get('dependencies');
+    dependencies.mongoose = 'latest';
+
+    file.set('dependencies', dependencies);
+  }
+
+  if (db === 'mongodb') {
+    const dependencies = file.get('dependencies');
+    dependencies.mongodb = 'latest';
+    dependencies.assert = 'latest';
+
+    file.set('dependencies', dependencies);
+  }
+
+  file.save(() => {});
 
   spinner.succeed('package.json Created');
 };
@@ -74,15 +87,9 @@ exports.createPackageJson = async ({
 exports.copyingESLintFiles = async (projectName) => {
   const spinner = ora('Creating eslint/pritter Config Files').start();
 
-  await copyFile(
-    [__dirname, '..', 'data', '.eslintrc.json'],
-    [process.cwd(), projectName, '.eslintrc.json']
-  );
+  await copyFile(projectName, paths.jsEslintSrc, paths.jsEslintDest);
 
-  await copyFile(
-    [__dirname, '..', 'data', 'prettier.config.js'],
-    [process.cwd(), projectName, 'prettier.config.js']
-  );
+  await copyFile(projectName, paths.jsPackageJsonSrc, paths.jsPackageJsonDest);
 
   spinner.succeed('eslint/pritter Config Files Created');
 };
@@ -90,52 +97,21 @@ exports.copyingESLintFiles = async (projectName) => {
 exports.copyingGitFiles = async (projectName) => {
   const spinner = ora('Creating Git Config File').start();
 
-  await copyFile(
-    [__dirname, '..', 'data', 'gitignore.txt'],
-    [process.cwd(), projectName, '.gitignore']
-  );
+  await copyFile(projectName, paths.gitSrc, paths.gitDest);
 
   spinner.succeed('Git Config File Created');
 };
 
-exports.copyingDotEnvFiles = async (projectName, db) => {
-  const file = editJsonFile(
-    path.join(process.cwd(), projectName, 'package.json')
+exports.copyingDotEnvFiles = async (projectName) => {
+  const requireDotenv = fs.readFileSync(
+    path.join(__dirname, ...paths.requireDotenv)
   );
 
-  const dependencies = file.get('dependencies');
-  dependencies.dotenv = 'latest';
+  insertLine(
+    path.join(process.cwd(), projectName, ...paths.jsIndexDest)
+  ).prependSync(requireDotenv);
 
-  file.set('dependencies', dependencies);
-
-  file.save();
-
-  insertLine(path.join(process.cwd(), projectName, 'index.js')).prependSync(
-    "require('dotenv').config();"
-  );
-
-  await copyFile(
-    [__dirname, '..', 'data', 'env.txt'],
-    [process.cwd(), projectName, '.env']
-  );
-
-  switch (db) {
-    case 'mongoose':
-      insertLine(path.join(process.cwd(), projectName, '.env')).prependSync(
-        'DB_URL= //enter your DB connection string'
-      );
-      break;
-    case 'mongodb':
-      insertLine(path.join(process.cwd(), projectName, '.env')).prependSync(
-        'DB_URL= //enter your DB connection string'
-      );
-      insertLine(path.join(process.cwd(), projectName, '.env')).prependSync(
-        'DB_NAME= //enter your DB name'
-      );
-      break;
-  }
-
-  createDir(path.join(projectName, 'models'));
+  await copyFile(projectName, paths.dotenvSrc, paths.dotenvDest);
 };
 
 exports.npmInstall = async (projectPath) => {
@@ -156,64 +132,39 @@ exports.gitInit = async (projectPath) => {
 
 exports.addDB = (projectName, db) => {
   const mongoose = async () => {
-    const file = editJsonFile(
-      path.join(process.cwd(), projectName, 'package.json')
+    const requireMongoose = fs.readFileSync(
+      path.join(__dirname, ...paths.requireMongoose)
     );
 
-    const dependencies = file.get('dependencies');
-    dependencies.mongoose = 'latest';
-
-    file.set('dependencies', dependencies);
-
-    file.save();
-
-    insertLine(path.join(process.cwd(), projectName, 'index.js')).prependSync(
-      "const mongoose = require('mongoose');"
+    const mongooseConnect = fs.readFileSync(
+      path.join(__dirname, ...paths.mongooseConnect)
     );
 
-    insertLine(path.join(process.cwd(), projectName, 'index.js')).appendSync(
-      `mongoose.connect(process.env.DB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      }).then(() => {
-        app.listen(process.env.SERVER_PORT, () => {console.log('Server Running')});
-      });`
-    );
+    insertLine(
+      path.join(process.cwd(), projectName, ...paths.jsIndexDest)
+    ).prependSync(requireMongoose);
+
+    insertLine(
+      path.join(process.cwd(), projectName, ...paths.jsIndexDest)
+    ).appendSync(mongooseConnect);
   };
 
   const mongodb = async () => {
-    const file = editJsonFile(
-      path.join(process.cwd(), projectName, 'package.json')
+    const requireMongodb = fs.readFileSync(
+      path.join(__dirname, ...paths.requireMongodb)
     );
 
-    const dependencies = file.get('dependencies');
-    dependencies.mongodb = 'latest';
-    dependencies.assert = 'latest';
-
-    file.set('dependencies', dependencies);
-
-    file.save();
-
-    insertLine(path.join(process.cwd(), projectName, 'index.js')).prependSync(
-      "const assert = require('assert');"
+    const mongodbConnect = fs.readFileSync(
+      path.join(__dirname, ...paths.mongodbConnect)
     );
 
-    insertLine(path.join(process.cwd(), projectName, 'index.js')).prependSync(
-      "const MongoClient = require('mongodb').MongoClient;"
-    );
+    insertLine(
+      path.join(process.cwd(), projectName, ...paths.jsIndexDest)
+    ).prependSync(requireMongodb);
 
-    insertLine(path.join(process.cwd(), projectName, 'index.js')).appendSync(
-      `MongoClient.connect(process.env.DB_URL, (err, client) => {
-        assert.equal(null, err);
-        console.log("Connected successfully to server");
-
-        app.listen(process.env.SERVER_PORT, () => {console.log('Server Running')});
-       
-        const db = client.db(process.env.DB_NAME);
-       
-        client.close();
-      });`
-    );
+    insertLine(
+      path.join(process.cwd(), projectName, ...paths.jsIndexDest)
+    ).appendSync(mongodbConnect);
   };
 
   switch (db) {
@@ -223,12 +174,16 @@ exports.addDB = (projectName, db) => {
     case 'mongodb':
       mongodb();
   }
+
+  createDir(path.join(projectName, 'src', 'models'));
 };
 
 exports.addListen = (projectName) => {
-  insertLine(path.join(process.cwd(), projectName, 'index.js')).appendSync(
-    "app.listen(process.env.SERVER_PORT, () => {console.log('Server Running')});"
-  );
+  const appListen = fs.readFileSync(path.join(__dirname, ...paths.appListen));
+
+  insertLine(
+    path.join(process.cwd(), projectName, ...paths.jsIndexDest)
+  ).appendSync(appListen);
 };
 
 exports.openVsCode = async (projectName) => {
