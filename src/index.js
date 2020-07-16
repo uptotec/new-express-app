@@ -23,6 +23,7 @@ const {
 const {
   creatingFolders,
   npmInstall,
+  yarnInstall,
   gitInit,
   addListen,
   openVsCode,
@@ -73,7 +74,7 @@ const installForTs = async (answers) => {
 };
 
 cliQuestions().then(async (answers) => {
-  const { confirmed, projectName, git, lan } = answers;
+  const { confirmed, projectName, git, lan, packageManager } = answers;
 
   if (!confirmed) {
     return;
@@ -82,16 +83,20 @@ cliQuestions().then(async (answers) => {
   await creatingFolders(projectName);
 
   if (lan === 'js') {
-    installForJs(answers);
+    await installForJs(answers);
   } else {
-    installForTs(answers);
+    await installForTs(answers);
   }
 
   if (git) {
     await gitInit(projectName);
   }
 
-  await npmInstall(projectName);
+  if (packageManager === 'npm') {
+    await npmInstall(projectName);
+  } else {
+    await yarnInstall(projectName);
+  }
 
   console.log('✔ Finished 🎉✨');
 

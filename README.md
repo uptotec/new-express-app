@@ -6,6 +6,10 @@ NPM package to create new pre-configured express app for REST API's from the com
 
 ## 🎉 What's new?
 
+### V 1.3.0
+
+(July 16, 2020) Now, you can choose a package manager npm or yar. 💖
+
 ### V 1.2.0
 
 (July 15, 2020) Now, you can choose between JavaScript with EsLint setup and TypeScript with TsLint setup. 🎉🎆
@@ -34,10 +38,11 @@ then answer the following Questions to configure your project:
 ? Enter description:
 ? Enter author name:
 ? what language you want to use? # JavaScript or TypeScript
+? choose a package Manager: # npm or yarn
 ? Want to initialise git?
 ? Want to install dotEnv?
-? Want to install database driver? #MongoDB, Mongoose or None
-? Want to initialise TsLint/Prettier? # if you chose JavaScript
+? Want to install database driver? # MongoDB, Mongoose or None
+? Want to initialise EsLint/Prettier? # if you chose JavaScript
 ? Want to initialise TsLint/Prettier? # if you chose TypeScript
 ```
 
@@ -78,11 +83,11 @@ then answer the following Questions to configure your project:
 - EsLint / TsLint
 - prettier
 - required devDependencies for the past two devDependencies.
+- @types/mongoose
+- @types/mongodb
+- @types/assert
 
 ## 📁 Folder structure
-
-The package creates an <code><b>index.js</b></code> file, <code><b>routes</b></code> folder, and <code><b>controllers</b></code> folder.
-If you chose to add <code><b>git</b></code> or <code><b>eslint</b></code> required configuration files will be added.
 
 ### JavaScript Setup
 

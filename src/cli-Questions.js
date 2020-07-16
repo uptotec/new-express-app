@@ -49,6 +49,12 @@ module.exports = async () => {
       },
     },
     {
+      type: 'list',
+      name: 'packageManager',
+      message: 'choose a package Manager:',
+      choices: ['npm', 'yarn'],
+    },
+    {
       type: 'confirm',
       name: 'git',
       message: 'Want to initialise git?',

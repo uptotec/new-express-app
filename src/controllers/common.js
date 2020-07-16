@@ -24,6 +24,14 @@ exports.npmInstall = async (projectPath) => {
   spinner.succeed('Dependencies Installed');
 };
 
+exports.yarnInstall = async (projectPath) => {
+  const spinner = ora('Installing Dependencies').start();
+
+  await exec(`cd ${projectPath} && yarn install`);
+
+  spinner.succeed('Dependencies Installed');
+};
+
 exports.gitInit = async (projectPath) => {
   const spinner = ora('Initialising Git').start();
 
