@@ -14,9 +14,6 @@ exports.createDir = (filePath) => {
 exports.copyFile = async (projectName, src, dest) => {
   fs.copyFileSync(
     path.join(__dirname, '..', ...src),
-    path.join(process.cwd(), projectName, ...dest),
-    (err) => {
-      if (err) console.log(err);
-    }
+    path.join(process.cwd(), projectName, ...dest)
   );
 };
