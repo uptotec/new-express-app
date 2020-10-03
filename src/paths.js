@@ -68,6 +68,9 @@ module.exports = {
   tslintSrc: ['data', 'ts', 'tslint.txt'],
   tslintDest: ['tslint.json'],
 
+  eslintForTSSrc: ['data', 'ts', 'eslintrc.txt'],
+  eslintForTSDest: ['.eslintrc.js'],
+
   tsPritterSrc: ['data', 'ts', 'prettierrc.txt'],
   tsPritterDest: ['.prettierrc.json'],
 

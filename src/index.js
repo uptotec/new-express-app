@@ -16,6 +16,7 @@ const {
   copyingTsFiles,
   createTsPackageJson,
   copyingTSLintFiles,
+  copyingEsLintForTSFiles,
   addTsDB,
   copyingTsDotEnvFiles,
 } = require('./controllers/tsController');
@@ -52,14 +53,16 @@ const installForJs = async (answers) => {
 };
 
 const installForTs = async (answers) => {
-  const { projectName, tslint, dotenv, db, lan } = answers;
+  const { projectName, linter, dotenv, db, lan } = answers;
 
   await createTsPackageJson(answers);
 
   await copyingTsFiles(projectName);
 
-  if (tslint) {
+  if (linter === 'tslint') {
     copyingTSLintFiles(projectName);
+  }else if (linter === 'eslint') {
+    copyingEsLintForTSFiles(projectName);
   }
 
   if (db !== 'none') {

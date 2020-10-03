@@ -13,3 +13,12 @@ exports.tslintDependencies = {
   'tslint-config-prettier': 'latest',
   tslint: 'latest',
 };
+
+exports.eslintForTSDependencies = {
+  eslint: 'latest',
+  '@typescript-eslint/parser': 'latest',
+  '@typescript-eslint/eslint-plugin': 'latest',
+  prettier: 'latest',
+  'eslint-config-prettier': 'latest',
+  'eslint-plugin-prettier': 'latest',
+};
