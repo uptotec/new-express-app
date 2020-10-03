@@ -77,9 +77,10 @@ module.exports = async () => {
       when: (answers) => answers.lan === 'js',
     },
     {
-      type: 'confirm',
-      name: 'tslint',
-      message: 'Want to initialise TsLint/Prettier?',
+      type: 'list',
+      name: 'linter',
+      message: 'Want to initialise a linter?',
+      choices: ['eslint', 'tslint', 'none'],
       when: (answers) => answers.lan === 'ts',
     },
   ]);

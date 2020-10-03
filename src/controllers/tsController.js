@@ -4,7 +4,7 @@ const editJsonFile = require('edit-json-file');
 const insertLine = require('insert-line');
 const ora = require('ora');
 const { createDir, copyFile } = require('../utils');
-const { tslintDependencies } = require('../dependencies');
+const { tslintDependencies, eslintForTSDependencies } = require('../dependencies');
 const paths = require('../paths');
 
 exports.copyingTsFiles = async (projectName) => {
@@ -23,7 +23,7 @@ exports.copyingTsFiles = async (projectName) => {
 
 exports.createTsPackageJson = async ({
   projectName: projectPath,
-  tslint,
+  linter,
   dotenv,
   db,
   version,
@@ -42,9 +42,14 @@ exports.createTsPackageJson = async ({
   file.set('version', version);
   file.set('description', description);
   file.set('author', author);
-  if (tslint) {
+  if (linter === 'tslint') {
     const devDependencies = file.get('devDependencies');
     file.set('devDependencies', { ...devDependencies, ...tslintDependencies });
+  }
+
+  if(linter === 'eslint') {
+    const devDependencies = file.get('devDependencies');
+    file.set('devDependencies', { ...devDependencies, ...eslintForTSDependencies });
   }
 
   if (dotenv) {
@@ -73,6 +78,16 @@ exports.copyingTSLintFiles = async (projectName) => {
   const spinner = ora('Creating tslint/pritter Config Files').start();
 
   await copyFile(projectName, paths.tslintSrc, paths.tslintDest);
+
+  await copyFile(projectName, paths.tsPritterSrc, paths.tsPritterDest);
+
+  spinner.succeed('tslint/pritter Config Files Created');
+};
+
+exports.copyingEsLintForTSFiles = async (projectName) => {
+  const spinner = ora('Creating eslint/pritter Config Files').start();
+
+  await copyFile(projectName, paths.eslintForTSSrc, paths.eslintForTSDest);
 
   await copyFile(projectName, paths.tsPritterSrc, paths.tsPritterDest);
 
